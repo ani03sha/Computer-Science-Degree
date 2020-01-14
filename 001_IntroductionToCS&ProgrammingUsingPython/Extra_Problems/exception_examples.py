@@ -1,24 +1,24 @@
 """
 @author: Anirudh Sharma
 """
-#
-#def exception_examples():
-#    try:
-#        a = int(input("Enter first number: "))
-#        b = int(input("Enter second number: "))
-#        print("a/b:", a/b)
-#        print("a+b:", a+b)
-#    except ValueError:
-#        print("Could not convert to a number")
-#    except ZeroDivisionError:
-#        print("Cannot divide by zero")
-#    except:
-#        print("Something went wrong")
-#    finally:
-#        print("Always executes!!!")
-#        
-#    
-#exception_examples()
+
+def exception_examples():
+    try:
+        a = int(input("Enter first number: "))
+        b = int(input("Enter second number: "))
+        print("a/b:", a/b)
+        print("a+b:", a+b)
+    except ValueError:
+        print("Could not convert to a number")
+    except ZeroDivisionError:
+        print("Cannot divide by zero")
+    except:
+        print("Something went wrong")
+    finally:
+        print("Always executes!!!")
+        
+    
+exception_examples()
     
 
 def get_ratios(L1, L2):
@@ -36,6 +36,6 @@ def get_ratios(L1, L2):
             raise ValueError("Bad argument occurred")
     return ratios
 
-L1 = [6, 4, -2, 7]
-L2 = [2, 6, 0, 8]
-print(get_ratios(L1, L2))
+a = [6, 4, -2, 7]
+b = [2, 6, 0, 8]
+print(get_ratios(a, b))
