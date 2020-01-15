@@ -91,6 +91,7 @@ def get_word_score(word, n):
     n: int >= 0
     returns: int >= 0
     """
+    word = word.lower()
     first_component = 0
     second_component = 0
     for w in word:
