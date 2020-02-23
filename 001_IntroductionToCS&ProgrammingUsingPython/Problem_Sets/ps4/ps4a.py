@@ -1,7 +1,7 @@
-# Problem Set 4A
-# Name: <your name here>
-# Collaborators:
-# Time Spent: x:xx
+"""
+@author Anirudh Sharma
+"""
+
 
 def get_permutations(sequence):
     '''
@@ -22,21 +22,15 @@ def get_permutations(sequence):
     Note: depending on your implementation, you may return the permutations in
     a different order than what is listed here.
     '''
-    permutations(list(sequence), 0, len(sequence) - 1)
+    if len(sequence) == 1:
+        return [sequence]
+    result = []
+    for i, let in enumerate(sequence):
+        for p in get_permutations(sequence[:i] + sequence[i + 1:]):
+            result = result + [let + p]
+    return result
 
-def permutations(sequence, start, end):
-    # Base condition
-    if(start == end):
-        print(''.join(sequence))
-        return
-    
-    for i in range(start, end + 1):
-        sequence[start], sequence[i] = sequence[i], sequence[start]
-        permutations(sequence, start + 1, end)
-        # Backtrack like a tree to restore previous state
-        sequence[start], sequence[i] = sequence[i], sequence[start]
-        
 
 if __name__ == '__main__':
     s = 'abc'
-    get_permutations(s)
+    print(get_permutations(s))

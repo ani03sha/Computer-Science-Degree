@@ -1,7 +1,7 @@
-# Problem Set 4C
-# Name: <your name here>
-# Collaborators:
-# Time Spent: x:xx
+"""
+@author Anirudh Sharma
+"""
+
 
 import string
 from ps4a import get_permutations
@@ -70,7 +70,9 @@ class SubMessage(object):
             self.message_text (string, determined by input text)
             self.valid_words (list, determined using helper function load_words)
         '''
-        pass #delete this line and replace with your code here
+        self.message_text = text
+        self.valid_words = load_words(WORDLIST_FILENAME)
+        
     
     def get_message_text(self):
         '''
@@ -78,7 +80,8 @@ class SubMessage(object):
         
         Returns: self.message_text
         '''
-        pass #delete this line and replace with your code here
+        return self.message_text
+        
 
     def get_valid_words(self):
         '''
@@ -87,7 +90,8 @@ class SubMessage(object):
         
         Returns: a COPY of self.valid_words
         '''
-        pass #delete this line and replace with your code here
+        return self.valid_words
+    
                 
     def build_transpose_dict(self, vowels_permutation):
         '''
@@ -108,8 +112,20 @@ class SubMessage(object):
         Returns: a dictionary mapping a letter (string) to 
                  another letter (string). 
         '''
+        punctuations = list(" !@#$%^&*()-_+={}[]|\:;'<>?,./\"")
+        dict = {}
+        for i, let in enumerate(vowels_permutation.lower()):
+            dict[VOWELS_LOWER[i]] = let
+        for i, let in enumerate(vowels_permutation.upper()):
+            dict[VOWELS_UPPER[i]]= let
+        for let in CONSONANTS_LOWER:
+            dict[let] = let
+        for let in CONSONANTS_UPPER:
+            dict[let] = let
+        for pun in punctuations:
+            dict[pun] = pun
+        return dict
         
-        pass #delete this line and replace with your code here
     
     def apply_transpose(self, transpose_dict):
         '''
@@ -118,8 +134,12 @@ class SubMessage(object):
         Returns: an encrypted version of the message text, based 
         on the dictionary
         '''
+        encrypted_message = []
+        for i in self.message_text:
+            encrypted_message.append(transpose_dict[i])
+        return ''.join(encrypted_message)
         
-        pass #delete this line and replace with your code here
+        
         
 class EncryptedSubMessage(SubMessage):
     def __init__(self, text):
@@ -132,7 +152,7 @@ class EncryptedSubMessage(SubMessage):
             self.message_text (string, determined by input text)
             self.valid_words (list, determined using helper function load_words)
         '''
-        pass #delete this line and replace with your code here
+        SubMessage.__init__(self, text)
 
     def decrypt_message(self):
         '''
@@ -152,7 +172,36 @@ class EncryptedSubMessage(SubMessage):
         
         Hint: use your function from Part 4A
         '''
-        pass #delete this line and replace with your code here
+        transpose_dict_list = []
+        de_message_list = []
+        perm_list = get_permutations('aeiou')
+        for p in perm_list:
+            transpose_dict_list.append(self.build_transpose_dict(p))
+        for d in transpose_dict_list:
+            de_message = self.apply_transpose(d)
+            de_message_list.append(de_message)
+        test = []
+        big_test = []
+        word_list = self.get_valid_words()
+        for m in de_message_list:
+            de_words = m.split()
+            for w in de_words:
+                if is_word(word_list, w):
+                    test.append(1)
+                else:
+                    test.append(0)
+            big_test.append((sum(test), m))
+            del test[0:len(test)]
+        best_choice = max(big_test)
+        possible_de_meesage = []
+        for t in big_test:
+            if t[0] == best_choice[0] and t[1] not in possible_de_meesage:
+                possible_de_meesage.append(t[1])
+        de_string = ''
+        for m in possible_de_meesage:
+            de_string = de_string + ', ' + m
+        return de_string[1:]
+                
     
 
 if __name__ == '__main__':
@@ -166,5 +215,12 @@ if __name__ == '__main__':
     print("Actual encryption:", message.apply_transpose(enc_dict))
     enc_message = EncryptedSubMessage(message.apply_transpose(enc_dict))
     print("Decrypted message:", enc_message.decrypt_message())
-     
-    #TODO: WRITE YOUR TEST CASES HERE
+    
+    message = SubMessage('Hairy Chest')
+    permutation = 'iauoe'
+    enc_dict = message.build_transpose_dict(permutation)
+    print("Original message:", message.get_message_text(), "Permutation:", permutation)
+    print("Expected encryption:", "Hiury Chast!")
+    print("Actual encryption:", message.apply_transpose(enc_dict))
+    enc_message = EncryptedSubMessage(message.apply_transpose((enc_dict)))
+    print('Decrypted message:', enc_message.decrypt_message())
