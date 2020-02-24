@@ -131,26 +131,51 @@ class DescriptionTrigger(PhraseTrigger):
 
 # TIME TRIGGERS
 
-# Problem 5
-# TODO: TimeTrigger
-# Constructor:
-#        Input: Time has to be in EST and in the format of "%d %b %Y %H:%M:%S".
-#        Convert time from string to a datetime before saving it as an attribute.
+class TimeTrigger(Trigger):
+    
+    def __init__(self, pub_time):
+        format = '%d %b %Y %H:%M:%S'
+        pub_time = datetime.strptime(pub_time, format)
+        pub_time = pub_time.replace(tzinfo=pytz.timezone("EST"))
+        self.pub_time = pub_time
 
-# Problem 6
-# TODO: BeforeTrigger and AfterTrigger
+
+class BeforeTrigger(TimeTrigger):
+    def evaluate(self, story):
+        return self.pub_time > story.get_pubdate().replace(tzinfo=pytz.timezone("EST"))
+
+
+class AfterTrigger(TimeTrigger):
+    def evaluate(self, story):
+        return self.pub_time < story.get_pubdate().replace(tzinfo=pytz.timezone("EST"))
 
 
 # COMPOSITE TRIGGERS
 
-# Problem 7
-# TODO: NotTrigger
+class NotTrigger(Trigger):
+    def __init__(self, trigger):
+        self.trigger = trigger
+    
+    def evaluate(self, story):
+        return not self.trigger.evaluate(story)
+        
 
-# Problem 8
-# TODO: AndTrigger
+class AndTrigger(Trigger):
+    def __init__(self, trigger1, trigger2):
+        self.t1 = trigger1
+        self.t2 = trigger2
+        
+    def evaluate(self, story):
+        return self.t1.evaluate(story) and self.t2.evaluate(story)
+        
 
-# Problem 9
-# TODO: OrTrigger
+class OrTrigger(Trigger):
+    def __init__(self, trigger1, trigger2):
+        self.t1 = trigger1
+        self.t2 = trigger2
+        
+    def evaluate(self, story):
+        return self.t1.evaluate(story) or self.t2.evaluate(story)
 
 
 #======================
@@ -164,10 +189,13 @@ def filter_stories(stories, triggerlist):
 
     Returns: a list of only the stories for which a trigger in triggerlist fires.
     """
-    # TODO: Problem 10
-    # This is a placeholder
-    # (we're just returning all the stories, with no filtering)
-    return stories
+    trigger_stories = []
+    for story in stories:
+        for t in triggerlist:
+            if t.evaluate(story):
+                trigger_stories.append(story)
+                break
+    return trigger_stories
 
 
 
