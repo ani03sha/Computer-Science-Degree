@@ -219,12 +219,26 @@ def read_trigger_config(filename):
         if not (len(line) == 0 or line.startswith('//')):
             lines.append(line)
 
-    # TODO: Problem 11
-    # line is the list of lines that you need to parse and for which you need
-    # to build triggers
-
-    print(lines) # for now, print it so you see what it contains!
-
+    trigger_dict = {}
+    trigger_list = []
+    for i in range(len(lines)):
+        t = lines[i].split(',')
+        if trig[1] == 'TITLE':
+            trigger_dict[t[0]] = TitleTrigger(t[2])
+        elif t[1] == 'DESCRIPTION':
+            trigger_dict[t[0]] = DescriptionTrigger(t[2])
+        elif t[1] == 'AFTER':
+            trigger_dict[t[0]] = AfterTrigger(t[2])
+        elif t[1] == 'BEFORE':
+            trigger_dict[t[0]] = BeforeTrigger(t[2])
+        elif t[1] == 'NOT':
+            trigger_dict[t[0]] = NotTrigger(t[2])
+        elif t[1] == 'AND':
+            trigger_dict[t[0]] = AndTrigger(trigger_dict[t[2]], trigger_dict[t[3]])
+        elif t[0] == 'ADD':
+            for x in range(1, len(t)):
+                trigger_list.append(trigger_dict[t[x]])
+    return trigger_list
 
 
 SLEEPTIME = 120 #seconds -- how often we poll
@@ -239,8 +253,6 @@ def main_thread(master):
         t4 = AndTrigger(t2, t3)
         triggerlist = [t1, t4]
 
-        # Problem 11
-        # TODO: After implementing read_trigger_config, uncomment this line 
         # triggerlist = read_trigger_config('triggers.txt')
         
         # HELPER CODE - you don't need to understand this!
